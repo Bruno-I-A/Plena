@@ -2,6 +2,7 @@ import { AppShell } from "@/components/AppShell";
 import { PremiumCard } from "@/components/PremiumCard";
 import { SafetyNote } from "@/components/SafetyNote";
 import { Badge } from "@/components/ui";
+import { PLENA_MONTHLY_MESSAGE_LIMIT, PLENA_PLANS } from "@/lib/plans";
 
 export default function PremiumPage() {
   return (
@@ -10,26 +11,41 @@ export default function PremiumPage() {
         <Badge>Plena Plus</Badge>
         <h1 className="mt-4 font-serif text-5xl leading-tight text-ink">Mais organização para cozinhar com leveza</h1>
         <p className="mt-4 max-w-2xl text-ink/68">
-          Planos pensados para ampliar conversas, favoritas, cardápios simples e listas de compras, sempre no campo culinário e informativo.
+          O plano pago da Plena inclui {PLENA_MONTHLY_MESSAGE_LIMIT} mensagens da assistente por mês para receitas, substituições,
+          cardápios simples e listas de compras.
         </p>
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
+        <div className="mt-8 grid gap-5 lg:grid-cols-3">
           <PremiumCard
-            features={["Conversas limitadas", "Histórico básico", "Algumas favoritas"]}
+            cta="Criar login"
+            description="Para experimentar a Plena e manter seu histórico salvo."
+            features={["Login com email e senha", "Histórico básico", "Receitas favoritas"]}
             name="Gratuito"
             price="R$ 0"
           />
           <PremiumCard
+            description={PLENA_PLANS.monthly.description}
             features={[
-              "Conversas ilimitadas",
-              "Favoritos ilimitados",
+              `${PLENA_MONTHLY_MESSAGE_LIMIT} mensagens da Plena por mês`,
+              "Histórico e favoritas salvos",
               "Cardápios semanais",
               "Lista de compras",
-              "Exportar receitas em PDF em breve",
               "Sugestões de rotina sem prescrição médica"
             ]}
             highlighted
-            name="Plena Plus"
-            price="R$ 19,90/mês"
+            name={PLENA_PLANS.monthly.name}
+            price={PLENA_PLANS.monthly.price}
+          />
+          <PremiumCard
+            description={PLENA_PLANS.annual.description}
+            features={[
+              `${PLENA_MONTHLY_MESSAGE_LIMIT} mensagens da Plena por mês`,
+              "Mesmo limite mensal com melhor preço anual",
+              "Histórico e favoritas salvos",
+              "Cardápios semanais",
+              "Lista de compras"
+            ]}
+            name={PLENA_PLANS.annual.name}
+            price={PLENA_PLANS.annual.price}
           />
         </div>
         <div className="mt-8">

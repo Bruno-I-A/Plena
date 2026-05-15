@@ -8,9 +8,17 @@ import { ChatMessage } from "@/components/ChatMessage";
 import { EmptyChatState } from "@/components/EmptyChatState";
 import { LoadingBubble } from "@/components/LoadingBubble";
 import { Button, LinkButton } from "@/components/ui";
+import { PLENA_MONTHLY_MESSAGE_LIMIT } from "@/lib/plans";
 import { favoriteTitle, recentHistory } from "@/lib/chat";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase-browser";
 import type { Message } from "@/lib/types";
+
+type Usage = {
+  limit: number;
+  used: number;
+  remaining: number;
+  resetAt: string;
+};
 
 export function ChatWindow() {
   const router = useRouter();
@@ -22,6 +30,7 @@ export function ChatWindow() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
+  const [usage, setUsage] = useState<Usage | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const isEmpty = messages.length === 0;
@@ -34,10 +43,30 @@ export function ChatWindow() {
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUserId(session?.user.id ?? null);
+      if (!session?.user) setUsage(null);
     });
 
     return () => listener.subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!userId || !isSupabaseConfigured) return;
+
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session?.access_token) return;
+
+      const response = await fetch("/api/usage", {
+        headers: {
+          Authorization: `Bearer ${data.session.access_token}`
+        }
+      });
+
+      if (!response.ok) return;
+
+      const payload = await response.json();
+      setUsage(payload.usage ?? null);
+    });
+  }, [userId]);
 
   useEffect(() => {
     if (!initialConversationId || !isSupabaseConfigured) return;
@@ -78,6 +107,11 @@ export function ChatWindow() {
       return;
     }
 
+    if (!userId) {
+      setError("Entre na sua conta para conversar com a Plena e acompanhar seus créditos mensais.");
+      return;
+    }
+
     const userMessage: Message = {
       id: crypto.randomUUID(),
       conversation_id: conversationId,
@@ -109,6 +143,7 @@ export function ChatWindow() {
       const payload = await response.json();
 
       if (!response.ok) {
+        if (payload.usage) setUsage(payload.usage);
         throw new Error(payload.error ?? "Não consegui responder agora.");
       }
 
@@ -121,6 +156,7 @@ export function ChatWindow() {
       };
 
       setConversationId(payload.conversationId ?? conversationId);
+      if (payload.usage) setUsage(payload.usage);
       if (payload.conversationId && payload.conversationId !== conversationId) {
         router.replace(`/chat?id=${payload.conversationId}`);
       }
@@ -164,7 +200,13 @@ export function ChatWindow() {
       <div className="mb-2 flex items-center justify-between gap-3 px-1">
         <div>
           <p className="text-sm font-semibold text-sage">Plena</p>
-          <p className="text-xs text-ink/58">Receitas, substituições e listas sem complicar.</p>
+          <p className="text-xs text-ink/58">
+            {userId
+              ? usage
+                ? `${usage.remaining} de ${usage.limit} mensagens da Plena restantes neste mês.`
+                : `Até ${PLENA_MONTHLY_MESSAGE_LIMIT} mensagens da Plena por mês.`
+              : "Entre na sua conta para usar suas mensagens mensais."}
+          </p>
         </div>
         <Button className="min-h-10 px-4 shadow-none" onClick={startNewConversation} type="button" variant="secondary">
           <RotateCcw size={16} aria-hidden />

@@ -4,6 +4,7 @@ import { Eye, EyeOff, Loader2, LogOut, Mail, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui";
+import { PLENA_MONTHLY_MESSAGE_LIMIT } from "@/lib/plans";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase-browser";
 
 type AuthMode = "login" | "signup";
@@ -141,7 +142,7 @@ export function AuthForm() {
             </div>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-ink/68">
-            Seu histórico, conversas e receitas favoritas podem ser salvos nesta conta.
+            Seu histórico, conversas e receitas favoritas ficam salvos nesta conta. Você tem até {PLENA_MONTHLY_MESSAGE_LIMIT} mensagens da Plena por mês.
           </p>
         </div>
 

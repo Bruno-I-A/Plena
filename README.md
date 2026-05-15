@@ -70,13 +70,14 @@ Ou cole o SQL no editor SQL do painel do Supabase.
 
 1. Configure as variáveis de ambiente.
 2. Rode `npm run dev`.
-3. Abra `/chat`.
-4. Teste mensagens como:
+3. Crie uma conta ou entre em `/login`.
+4. Abra `/chat`.
+5. Teste mensagens como:
    - `Tenho frango, arroz e abobrinha. O que posso fazer?`
    - `Quero uma janta leve e rápida.`
    - `Não posso usar leite. Troca essa receita.`
 
-O chat funciona sem login para conversa imediata. Para salvar histórico e favoritas, faça cadastro ou login em `/login`.
+O chat exige login para contabilizar o limite mensal. Cada conta tem 120 mensagens da Plena por mês; o uso aparece no topo do chat.
 
 ## Rotas
 
@@ -108,5 +109,6 @@ Pedidos sobre sintomas, hormônios, diabetes, colesterol, pressão alta, ansieda
 - Favoritar respostas de receita
 - Copiar respostas
 - Login, cadastro e logout
-- Página premium sem checkout real
+- Página premium com planos mensal de R$ 42,00 e anual de R$ 352
+- Limite mensal de 120 mensagens da Plena por conta
 - Migrations SQL com RLS
