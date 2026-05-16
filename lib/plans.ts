@@ -21,6 +21,11 @@ export const PLENA_PLANS = {
   }
 } as const;
 
+export const PLENA_PLANS_BY_PROFILE_PLAN = {
+  plena_monthly: PLENA_PLANS.monthly,
+  plena_annual: PLENA_PLANS.annual
+} as const;
+
 export function isPlenaPaidPlanId(value: unknown): value is PlenaPaidPlanId {
   return value === "monthly" || value === "annual";
 }

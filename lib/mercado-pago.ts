@@ -10,11 +10,27 @@ type MercadoPagoPreferenceResponse = {
 export type MercadoPagoPayment = {
   id: number;
   status: string;
+  status_detail?: string;
   external_reference?: string;
   metadata?: {
     user_id?: string;
     plan_id?: PlenaPaidPlanId;
     checkout_id?: string;
+  };
+};
+
+type MercadoPagoPaymentRequest = {
+  token?: string;
+  transaction_amount: number;
+  installments?: number;
+  payment_method_id: string;
+  issuer_id?: string | number;
+  payer: {
+    email: string;
+    identification?: {
+      type?: string;
+      number?: string;
+    };
   };
 };
 
@@ -107,6 +123,55 @@ export async function getMercadoPagoPayment(paymentId: string) {
   }
 
   return (await response.json()) as MercadoPagoPayment;
+}
+
+export async function createMercadoPagoPayment({
+  payment,
+  checkoutId,
+  planId,
+  email
+}: {
+  payment: MercadoPagoPaymentRequest;
+  checkoutId: string;
+  planId: PlenaPaidPlanId;
+  email: string;
+}) {
+  const accessToken = getMercadoPagoAccessToken();
+  if (!accessToken) {
+    throw new Error("MERCADO_PAGO_ACCESS_TOKEN não configurado.");
+  }
+
+  const plan = PLENA_PLANS[planId];
+  const response = await fetch("https://api.mercadopago.com/v1/payments", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+      "X-Idempotency-Key": crypto.randomUUID()
+    },
+    body: JSON.stringify({
+      ...payment,
+      transaction_amount: plan.amount,
+      description: plan.name,
+      external_reference: checkoutId,
+      metadata: {
+        checkout_id: checkoutId,
+        plan_id: planId
+      },
+      payer: {
+        ...payment.payer,
+        email
+      }
+    })
+  });
+
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(payload?.message ?? "Mercado Pago recusou o pagamento.");
+  }
+
+  return payload as MercadoPagoPayment;
 }
 
 export function getPaymentDataId(request: Request, body: unknown) {

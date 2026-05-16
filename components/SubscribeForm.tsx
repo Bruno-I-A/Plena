@@ -3,6 +3,7 @@
 import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
+import { MercadoPagoPaymentBrick } from "@/components/MercadoPagoPaymentBrick";
 import { Button } from "@/components/ui";
 import { isPlenaPaidPlanId, PLENA_PLANS, type PlenaPaidPlanId } from "@/lib/plans";
 
@@ -14,6 +15,7 @@ export function SubscribeForm({ initialPlan = "monthly" }: { initialPlan?: Plena
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [checkoutId, setCheckoutId] = useState<string | null>(null);
 
   const selectedPlan = useMemo(() => PLENA_PLANS[planId], [planId]);
 
@@ -36,15 +38,27 @@ export function SubscribeForm({ initialPlan = "monthly" }: { initialPlan?: Plena
       });
 
       const payload = await response.json();
-      if (!response.ok || !payload.checkoutUrl) {
-        throw new Error(payload.error ?? "Não consegui abrir o checkout.");
+      if (!response.ok || !payload.checkoutId) {
+        throw new Error(payload.error ?? "Não consegui preparar o pagamento.");
       }
 
-      window.location.href = payload.checkoutUrl;
+      setCheckoutId(payload.checkoutId);
     } catch (checkoutError) {
-      setError(checkoutError instanceof Error ? checkoutError.message : "Não consegui abrir o checkout.");
+      setError(checkoutError instanceof Error ? checkoutError.message : "Não consegui preparar o pagamento.");
+    } finally {
       setLoading(false);
     }
+  }
+
+  if (checkoutId) {
+    return (
+      <MercadoPagoPaymentBrick
+        checkoutId={checkoutId}
+        email={email.trim().toLowerCase()}
+        onBack={() => setCheckoutId(null)}
+        planId={planId}
+      />
+    );
   }
 
   return (
@@ -80,12 +94,12 @@ export function SubscribeForm({ initialPlan = "monthly" }: { initialPlan?: Plena
       </label>
 
       <div className="rounded-2xl bg-sage/10 px-4 py-3 text-sm leading-relaxed text-ink/70">
-        Você vai pagar o plano {selectedPlan.name.toLowerCase()} no Mercado Pago. Depois do pagamento, crie sua senha usando este mesmo email.
+        Você vai pagar o plano {selectedPlan.name.toLowerCase()} aqui na Plena, com segurança do Mercado Pago. Depois do pagamento, crie sua senha usando este mesmo email.
       </div>
 
       <Button className="w-full" disabled={loading} type="submit">
         {loading && <Loader2 className="animate-spin" size={17} aria-hidden />}
-        Ir para pagamento
+        Continuar para pagamento
       </Button>
 
       {error && <p className="rounded-2xl bg-rose/10 px-4 py-3 text-sm text-ink">{error}</p>}

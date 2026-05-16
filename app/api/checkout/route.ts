@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createMercadoPagoPreference } from "@/lib/mercado-pago";
 import { isPlenaPaidPlanId } from "@/lib/plans";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
 
@@ -43,21 +42,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Não consegui preparar sua assinatura agora." }, { status: 500 });
     }
 
-    const preference = await createMercadoPagoPreference({
-      planId: body.planId,
-      checkoutId: pendingCheckout.id,
-      email,
-      name,
-      origin: request.nextUrl.origin
-    });
-
-    await admin
-      .from("pending_subscriptions")
-      .update({ provider_preference_id: preference.id })
-      .eq("id", pendingCheckout.id);
-
     return NextResponse.json({
-      checkoutUrl: preference.init_point ?? preference.sandbox_init_point
+      checkoutId: pendingCheckout.id
     });
   } catch (error) {
     console.error(error);
