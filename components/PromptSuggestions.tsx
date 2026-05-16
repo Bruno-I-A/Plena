@@ -2,11 +2,11 @@
 
 const suggestions = [
   "Tenho poucos ingredientes",
-  "Quero uma janta leve",
+  "Quero um jantar leve",
   "Quero um doce mais leve",
-  "Me ajude com marmitas",
+  "Cardápio da semana",
   "Lista de compras da semana",
-  "Receita sem lactose"
+  "Café da manhã com saciedade"
 ];
 
 export function PromptSuggestions({ onSelect }: { onSelect: (value: string) => void }) {

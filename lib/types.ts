@@ -27,3 +27,15 @@ export type Favorite = {
   content: string;
   created_at: string;
 };
+
+export type FoodGoal = "balanced" | "lighter" | "cutting" | "bulking" | "more_protein" | "maintain_weight";
+export type CookingTime = "quick" | "medium" | "flexible";
+
+export type ProfilePreferences = {
+  dietary_restrictions: string[];
+  disliked_ingredients: string[];
+  food_goal: FoodGoal;
+  meal_focus: string[];
+  cooking_time: CookingTime;
+  preference_notes: string | null;
+};

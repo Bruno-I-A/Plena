@@ -1,4 +1,5 @@
 import type { Message } from "@/lib/types";
+import type { ProfilePreferences } from "@/lib/types";
 
 export const SYSTEM_PROMPT = `Você é Plena, uma assistente culinária especializada em receitas leves, práticas e acolhedoras para mulheres na menopausa. Sua função é conversar com a usuária e sugerir receitas, ideias de refeições, cardápios simples, substituições de ingredientes, marmitas e listas de compras.
 
@@ -39,6 +40,41 @@ Observação segura:
 
 Se a usuária informar ingredientes, crie receitas usando principalmente esses ingredientes.
 Vá direto à receita. Só faça uma pergunta se a dúvida for essencial — e apenas uma.`;
+
+const foodGoalLabels: Record<ProfilePreferences["food_goal"], string> = {
+  balanced: "equilibrar a rotina sem foco específico",
+  lighter: "refeições mais leves",
+  cutting: "cutting, com sugestões culinárias mais leves e saciantes, sem prescrever dieta",
+  bulking: "bulking, com sugestões culinárias mais reforçadas, sem prescrever dieta",
+  more_protein: "mais proteína nas refeições, sem prescrever quantidade clínica",
+  maintain_weight: "manutenção de peso, sem promessa de resultado"
+};
+
+const cookingTimeLabels: Record<ProfilePreferences["cooking_time"], string> = {
+  quick: "preparos rápidos",
+  medium: "preparos de tempo moderado",
+  flexible: "tempo flexível"
+};
+
+function listOrFallback(items: string[], fallback: string) {
+  return items.length > 0 ? items.join(", ") : fallback;
+}
+
+export function createPersonalizedSystemPrompt(preferences?: ProfilePreferences | null) {
+  if (!preferences) return SYSTEM_PROMPT;
+
+  return `${SYSTEM_PROMPT}
+
+Preferências da usuária:
+- Restrições, alergias ou intolerâncias: ${listOrFallback(preferences.dietary_restrictions, "não informadas")}
+- Ingredientes que ela não gosta ou prefere evitar: ${listOrFallback(preferences.disliked_ingredients, "não informados")}
+- Objetivo culinário atual: ${foodGoalLabels[preferences.food_goal]}
+- Focos de refeição: ${listOrFallback(preferences.meal_focus, "não informados")}
+- Tempo de preparo preferido: ${cookingTimeLabels[preferences.cooking_time]}
+- Observações livres: ${preferences.preference_notes?.trim() || "não informadas"}
+
+Use essas preferências para adaptar sugestões culinárias. Não trate cutting, bulking ou qualquer objetivo como prescrição nutricional; mantenha linguagem informativa e recomende profissional quando houver objetivo clínico, condição de saúde ou necessidade individualizada.`;
+}
 
 const recipeSignals = [
   "ingredientes:",

@@ -1,5 +1,7 @@
 import { Check } from "lucide-react";
 import { Card, LinkButton } from "@/components/ui";
+import { CheckoutButton } from "@/components/CheckoutButton";
+import type { PlenaPaidPlanId } from "@/lib/plans";
 
 export function PremiumCard({
   name,
@@ -7,7 +9,8 @@ export function PremiumCard({
   description,
   features,
   highlighted,
-  cta = "Escolher plano"
+  cta = "Escolher plano",
+  planId
 }: {
   name: string;
   price: string;
@@ -15,6 +18,7 @@ export function PremiumCard({
   features: string[];
   highlighted?: boolean;
   cta?: string;
+  planId?: PlenaPaidPlanId;
 }) {
   return (
     <Card className={highlighted ? "border-sage/30 bg-white" : undefined}>
@@ -29,9 +33,15 @@ export function PremiumCard({
           </li>
         ))}
       </ul>
-      <LinkButton className="mt-6 w-full" href="/login" variant={highlighted ? "primary" : "secondary"}>
-        {cta}
-      </LinkButton>
+      {planId ? (
+        <CheckoutButton className="mt-6" planId={planId} variant={highlighted ? "primary" : "secondary"}>
+          {cta}
+        </CheckoutButton>
+      ) : (
+        <LinkButton className="mt-6 w-full" href="/login" variant={highlighted ? "primary" : "secondary"}>
+          {cta}
+        </LinkButton>
+      )}
     </Card>
   );
 }

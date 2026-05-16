@@ -10,7 +10,7 @@ O app não oferece orientação médica, nutricional clínica ou tratamento. A P
 - TypeScript
 - Tailwind CSS
 - Supabase Auth e Postgres
-- OpenAI API
+- Anthropic API
 
 ## Como instalar
 
@@ -36,10 +36,14 @@ Copy-Item .env.example .env.local
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
-OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+NEXT_PUBLIC_SITE_URL=
+MERCADO_PAGO_ACCESS_TOKEN=
+MERCADO_PAGO_WEBHOOK_SECRET=
+MERCADO_PAGO_NOTIFICATION_URL=
 ```
 
-`OPENAI_API_KEY` e `SUPABASE_SERVICE_ROLE_KEY` ficam apenas no servidor. Não use essas chaves em componentes client.
+`ANTHROPIC_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `MERCADO_PAGO_ACCESS_TOKEN` e `MERCADO_PAGO_WEBHOOK_SECRET` ficam apenas no servidor. Não use essas chaves em componentes client.
 
 ## Como rodar
 
@@ -102,13 +106,14 @@ Pedidos sobre sintomas, hormônios, diabetes, colesterol, pressão alta, ansieda
 
 - Landing page responsiva
 - Chat mobile-first com sugestões rápidas
-- API `/api/chat` com OpenAI
+- API `/api/chat` com Anthropic
 - Salvamento de conversas e mensagens no Supabase quando autenticada
 - Histórico de conversas
 - Remoção de conversas
 - Favoritar respostas de receita
 - Copiar respostas
 - Login, cadastro e logout
-- Página premium com planos mensal de R$ 42,00 e anual de R$ 352
+- Checkout real com Mercado Pago
+- Página premium com planos mensal de R$ 34,99 e anual de R$ 352
 - Limite mensal de 120 mensagens da Plena por conta
 - Migrations SQL com RLS

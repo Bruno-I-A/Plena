@@ -36,7 +36,7 @@ export function ChatInput({
             onSubmit();
           }
         }}
-        placeholder="Conte o que você tem em casa..."
+        placeholder="Conte o que você tem em casa ou quer comer hoje..."
         value={value}
       />
       <Button aria-label="Enviar mensagem" className="h-12 w-12 shrink-0 px-0 shadow-none" disabled={disabled || !value.trim()} type="submit">

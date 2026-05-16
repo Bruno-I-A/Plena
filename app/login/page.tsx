@@ -56,7 +56,7 @@ export default function LoginPage() {
           <div className="flex items-start gap-3 rounded-3xl bg-cream/70 p-4 text-sm leading-relaxed text-ink/65">
             <CheckCircle2 className="mt-0.5 shrink-0 text-sage" size={18} aria-hidden />
             <p>
-              Você ainda pode conversar sem login, mas favoritos e histórico ficam disponíveis quando a conta está conectada.
+              Depois de entrar, escolha um plano para liberar suas mensagens mensais, favoritos e histórico.
             </p>
           </div>
         </section>

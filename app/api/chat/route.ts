@@ -1,10 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { PLENA_MONTHLY_MESSAGE_LIMIT } from "@/lib/plans";
-import { createConversationTitle, SYSTEM_PROMPT } from "@/lib/chat";
+import { createConversationTitle, createPersonalizedSystemPrompt } from "@/lib/chat";
 import { createSupabaseFromRequest, getAuthenticatedUser } from "@/lib/server-auth";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
+import { getSubscriptionStatus } from "@/lib/subscription";
 import { getMonthlyPlenaUsage } from "@/lib/usage";
+import type { ProfilePreferences } from "@/lib/types";
 
 export const runtime = "nodejs";
 
@@ -38,6 +40,17 @@ export async function POST(request: NextRequest) {
     const database = admin ?? createSupabaseFromRequest(request);
     if (!database) {
       return jsonError("O Supabase ainda não foi configurado no servidor.", 500);
+    }
+
+    const subscription = await getSubscriptionStatus(database, user.id);
+    if (!subscription.active) {
+      return NextResponse.json(
+        {
+          error: "Escolha um plano da Plena para conversar e usar suas mensagens mensais.",
+          code: "payment_required"
+        },
+        { status: 402 }
+      );
     }
 
     const usage = await getMonthlyPlenaUsage(database, user.id);
@@ -75,6 +88,12 @@ export async function POST(request: NextRequest) {
     }
 
     const anthropic = new Anthropic({ apiKey });
+    const { data: profilePreferences } = await database
+      .from("profiles")
+      .select("dietary_restrictions, disliked_ingredients, food_goal, meal_focus, cooking_time, preference_notes")
+      .eq("id", user.id)
+      .maybeSingle();
+
     const history = (body.history ?? [])
       .filter((item) => (item.role === "user" || item.role === "assistant") && item.content?.trim())
       .slice(-8);
@@ -82,7 +101,7 @@ export async function POST(request: NextRequest) {
     const response = await anthropic.messages.create({
       model: "claude-haiku-4-5",
       max_tokens: 850,
-      system: SYSTEM_PROMPT,
+      system: createPersonalizedSystemPrompt(profilePreferences as ProfilePreferences | null),
       messages: [
         ...history,
         { role: "user", content: message }

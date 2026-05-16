@@ -33,6 +33,7 @@ export default function PremiumPage() {
             ]}
             highlighted
             name={PLENA_PLANS.monthly.name}
+            planId="monthly"
             price={PLENA_PLANS.monthly.price}
           />
           <PremiumCard
@@ -45,6 +46,7 @@ export default function PremiumPage() {
               "Lista de compras"
             ]}
             name={PLENA_PLANS.annual.name}
+            planId="annual"
             price={PLENA_PLANS.annual.price}
           />
         </div>

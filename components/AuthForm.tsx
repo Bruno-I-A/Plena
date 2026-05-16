@@ -3,6 +3,7 @@
 import { Eye, EyeOff, Loader2, LogOut, Mail, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import { ProfilePreferencesForm } from "@/components/ProfilePreferencesForm";
 import { Button } from "@/components/ui";
 import { PLENA_MONTHLY_MESSAGE_LIMIT } from "@/lib/plans";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase-browser";
@@ -157,6 +158,8 @@ export function AuthForm() {
         </div>
 
         {feedback && <FeedbackMessage feedback={feedback} />}
+
+        <ProfilePreferencesForm />
       </div>
     );
   }
