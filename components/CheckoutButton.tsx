@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui";
 import type { PlenaPaidPlanId } from "@/lib/plans";
-import { isSupabaseConfigured, supabase } from "@/lib/supabase-browser";
 
 export function CheckoutButton({
   planId,
@@ -23,41 +22,10 @@ export function CheckoutButton({
   const [error, setError] = useState("");
 
   async function startCheckout() {
-    if (!isSupabaseConfigured) {
-      setError("O login ainda não foi configurado.");
-      return;
-    }
-
     setLoading(true);
     setError("");
-
-    try {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session?.access_token) {
-        router.push("/login");
-        return;
-      }
-
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${data.session.access_token}`
-        },
-        body: JSON.stringify({ planId })
-      });
-
-      const payload = await response.json();
-      if (!response.ok || !payload.checkoutUrl) {
-        throw new Error(payload.error ?? "Não consegui abrir o checkout.");
-      }
-
-      window.location.href = payload.checkoutUrl;
-    } catch (checkoutError) {
-      setError(checkoutError instanceof Error ? checkoutError.message : "Não consegui abrir o checkout.");
-    } finally {
-      setLoading(false);
-    }
+    router.push(`/assinar?plano=${planId}`);
+    setTimeout(() => setLoading(false), 1000);
   }
 
   return (

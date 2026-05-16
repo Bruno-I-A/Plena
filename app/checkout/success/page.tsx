@@ -10,9 +10,9 @@ export default function CheckoutSuccessPage() {
           <CheckCircle2 className="mx-auto text-sage" size={42} aria-hidden />
           <h1 className="mt-5 font-serif text-4xl text-ink">Pagamento recebido</h1>
           <p className="mt-3 text-ink/68">
-            Seu plano será ativado assim que o Mercado Pago confirmar o pagamento. Normalmente isso acontece em poucos instantes.
+            Seu plano será liberado para o email usado na compra assim que o Mercado Pago confirmar. Agora crie sua senha para acessar a Plena.
           </p>
-          <LinkButton className="mt-6" href="/chat">Ir para a Plena</LinkButton>
+          <LinkButton className="mt-6" href="/ativar-acesso">Criar meu acesso</LinkButton>
         </Card>
       </main>
     </AppShell>

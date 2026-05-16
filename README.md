@@ -81,11 +81,13 @@ Ou cole o SQL no editor SQL do painel do Supabase.
    - `Quero uma janta leve e rápida.`
    - `Não posso usar leite. Troca essa receita.`
 
-O chat exige login para contabilizar o limite mensal. Cada conta tem 120 mensagens da Plena por mês; o uso aparece no topo do chat.
+O fluxo comercial principal é: a pessoa assina em `/assinar`, paga pelo Mercado Pago e depois cria o acesso em `/ativar-acesso` usando o mesmo email da compra. O chat exige conta com plano ativo para contabilizar o limite mensal.
 
 ## Rotas
 
 - `/` landing page
+- `/assinar` assinatura antes do cadastro
+- `/ativar-acesso` criação de senha após pagamento
 - `/chat` chat com IA
 - `/conversas` histórico de conversas
 - `/favoritas` receitas salvas

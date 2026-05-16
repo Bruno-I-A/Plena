@@ -2,39 +2,59 @@ import { NextRequest, NextResponse } from "next/server";
 import { createMercadoPagoPreference } from "@/lib/mercado-pago";
 import { isPlenaPaidPlanId } from "@/lib/plans";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
-import { getAuthenticatedUser } from "@/lib/server-auth";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getAuthenticatedUser(request);
-    if (!user) {
-      return NextResponse.json({ error: "Entre na sua conta antes de escolher um plano." }, { status: 401 });
-    }
-
-    const body = (await request.json()) as { planId?: unknown };
+    const body = (await request.json()) as { planId?: unknown; name?: string; email?: string };
     if (!isPlenaPaidPlanId(body.planId)) {
       return NextResponse.json({ error: "Escolha um plano válido." }, { status: 400 });
     }
 
+    const name = body.name?.trim();
+    const email = body.email?.trim().toLowerCase();
+
+    if (!name || name.length < 2) {
+      return NextResponse.json({ error: "Informe seu nome para continuar." }, { status: 400 });
+    }
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "Informe um email válido para liberar seu acesso depois do pagamento." }, { status: 400 });
+    }
+
+    const admin = createSupabaseAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Supabase admin não configurado." }, { status: 500 });
+    }
+
+    const { data: pendingCheckout, error: pendingError } = await admin
+      .from("pending_subscriptions")
+      .insert({
+        name,
+        email,
+        plan: body.planId,
+        status: "created"
+      })
+      .select("id")
+      .single();
+
+    if (pendingError || !pendingCheckout) {
+      return NextResponse.json({ error: "Não consegui preparar sua assinatura agora." }, { status: 500 });
+    }
+
     const preference = await createMercadoPagoPreference({
       planId: body.planId,
-      userId: user.id,
-      email: user.email,
+      checkoutId: pendingCheckout.id,
+      email,
+      name,
       origin: request.nextUrl.origin
     });
 
-    const admin = createSupabaseAdmin();
-    if (admin) {
-      await admin.from("payments").insert({
-        user_id: user.id,
-        plan: body.planId,
-        provider: "mercado_pago",
-        provider_preference_id: preference.id,
-        status: "created"
-      });
-    }
+    await admin
+      .from("pending_subscriptions")
+      .update({ provider_preference_id: preference.id })
+      .eq("id", pendingCheckout.id);
 
     return NextResponse.json({
       checkoutUrl: preference.init_point ?? preference.sandbox_init_point

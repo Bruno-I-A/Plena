@@ -14,6 +14,7 @@ export type MercadoPagoPayment = {
   metadata?: {
     user_id?: string;
     plan_id?: PlenaPaidPlanId;
+    checkout_id?: string;
   };
 };
 
@@ -24,12 +25,16 @@ function getMercadoPagoAccessToken() {
 export async function createMercadoPagoPreference({
   planId,
   userId,
+  checkoutId,
   email,
+  name,
   origin
 }: {
   planId: PlenaPaidPlanId;
-  userId: string;
+  userId?: string | null;
+  checkoutId?: string | null;
   email?: string | null;
+  name?: string | null;
   origin: string;
 }) {
   const accessToken = getMercadoPagoAccessToken();
@@ -59,10 +64,11 @@ export async function createMercadoPagoPreference({
           unit_price: plan.amount
         }
       ],
-      payer: email ? { email } : undefined,
-      external_reference: `${userId}:${planId}`,
+      payer: email ? { email, name: name ?? undefined } : undefined,
+      external_reference: checkoutId ?? (userId ? `${userId}:${planId}` : undefined),
       metadata: {
-        user_id: userId,
+        ...(userId ? { user_id: userId } : {}),
+        ...(checkoutId ? { checkout_id: checkoutId } : {}),
         plan_id: planId
       },
       back_urls: {

@@ -14,9 +14,15 @@ type Feedback = {
   text: string;
 };
 
-export function AuthForm() {
+export function AuthForm({
+  initialMode = "login",
+  redirectTo = "/chat"
+}: {
+  initialMode?: AuthMode;
+  redirectTo?: string;
+}) {
   const router = useRouter();
-  const [mode, setMode] = useState<AuthMode>("login");
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -104,8 +110,8 @@ export function AuthForm() {
 
       if (error) throw error;
 
-      setFeedback({ tone: "success", text: "Login feito. Redirecionando para o chat..." });
-      router.push("/chat");
+      setFeedback({ tone: "success", text: "Login feito. Redirecionando para a Plena..." });
+      router.push(redirectTo);
       router.refresh();
     } catch (authError) {
       setFeedback({
