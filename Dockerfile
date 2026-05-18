@@ -19,9 +19,11 @@ RUN npm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
+ARG NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY=$NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "export MERCADO_PAGO_PUBLIC_KEY=\"${MERCADO_PAGO_PUBLIC_KEY:-$NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY}\" && node server.js"]

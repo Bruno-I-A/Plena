@@ -21,7 +21,7 @@ export function CheckoutButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function startCheckout() {
+  function startCheckout() {
     setLoading(true);
     setError("");
     router.push(`/assinar?plano=${planId}`);

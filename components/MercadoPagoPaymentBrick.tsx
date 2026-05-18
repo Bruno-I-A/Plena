@@ -16,8 +16,40 @@ export function MercadoPagoPaymentBrick({
   planId: PlenaPaidPlanId;
   onBack: () => void;
 }) {
-  const publicKey = process.env.NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY ?? "";
+  const [publicKey, setPublicKey] = useState(process.env.NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY ?? "");
+  const [loadingPublicKey, setLoadingPublicKey] = useState(!publicKey);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (publicKey) {
+      setLoadingPublicKey(false);
+      return;
+    }
+
+    let active = true;
+
+    fetch("/api/checkout/public-key", { cache: "no-store" })
+      .then(async (response) => {
+        const payload = (await response.json()) as { publicKey?: string };
+        if (active) {
+          setPublicKey(payload.publicKey ?? "");
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setPublicKey("");
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setLoadingPublicKey(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [publicKey]);
 
   useEffect(() => {
     if (publicKey) {
@@ -53,10 +85,18 @@ export function MercadoPagoPaymentBrick({
     []
   );
 
+  if (loadingPublicKey) {
+    return (
+      <div className="rounded-2xl bg-sage/10 px-4 py-3 text-sm text-ink/70">
+        Preparando pagamento seguro...
+      </div>
+    );
+  }
+
   if (!publicKey) {
     return (
       <div className="rounded-2xl bg-rose/10 px-4 py-3 text-sm text-ink">
-        Configure NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY para exibir o pagamento na Plena.
+        Configure MERCADO_PAGO_PUBLIC_KEY ou NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY para exibir o pagamento na Plena.
       </div>
     );
   }
