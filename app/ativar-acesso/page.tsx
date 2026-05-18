@@ -1,4 +1,4 @@
-import { AuthForm } from "@/components/AuthForm";
+import { AccessPasswordForm } from "@/components/AccessPasswordForm";
 import { PublicShell } from "@/components/PublicShell";
 import { Badge, Card } from "@/components/ui";
 
@@ -16,11 +16,11 @@ export default async function ActivateAccessPage({
           <Badge>Acesso Plena</Badge>
           <h1 className="mt-5 font-serif text-5xl leading-tight text-ink">Crie sua senha para entrar</h1>
           <p className="mt-5 text-lg leading-relaxed text-ink/68">
-            Use o mesmo email informado na compra. Se o pagamento já foi aprovado, seu plano será vinculado automaticamente à conta.
+            Use o mesmo email informado na compra. Depois de criar a senha, você entra no app e configura suas preferências por lá.
           </p>
         </section>
         <Card className="bg-white/76">
-          <AuthForm initialEmail={email} initialMode="signup" redirectTo="/chat" />
+          <AccessPasswordForm initialEmail={email} redirectTo="/chat" />
         </Card>
       </main>
     </PublicShell>
