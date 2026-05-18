@@ -1,11 +1,11 @@
 import { Suspense } from "react";
-import { AppShell } from "@/components/AppShell";
+import { PublicShell } from "@/components/PublicShell";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { Badge, Card } from "@/components/ui";
 
 export default function SubscribePage() {
   return (
-    <AppShell>
+    <PublicShell>
       <main className="mx-auto grid min-h-[calc(100dvh-9.35rem)] max-w-5xl gap-8 px-4 py-10 md:min-h-[calc(100dvh-4.25rem)] md:grid-cols-[0.9fr_1.1fr] md:items-center">
         <section>
           <Badge>Assinar Plena</Badge>
@@ -20,6 +20,6 @@ export default function SubscribePage() {
           </Suspense>
         </Card>
       </main>
-    </AppShell>
+    </PublicShell>
   );
 }

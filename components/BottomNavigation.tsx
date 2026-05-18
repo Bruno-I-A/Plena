@@ -9,7 +9,7 @@ const items = [
   { href: "/chat", label: "Chat", icon: MessageCircle },
   { href: "/conversas", label: "Conversas", icon: Utensils },
   { href: "/favoritas", label: "Favoritas", icon: Heart },
-  { href: "/premium", label: "Premium", icon: Sparkles },
+  { href: "/contratar", label: "Contratar", icon: Sparkles },
   { href: "/login", label: "Perfil", icon: UserRound }
 ];
 
