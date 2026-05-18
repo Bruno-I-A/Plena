@@ -17,6 +17,12 @@ type PaymentResponse = {
   } | null;
 };
 
+type CheckoutStatusResponse = {
+  status: string;
+  statusDetail?: string;
+  error?: string;
+};
+
 export function MercadoPagoPaymentBrick({
   checkoutId,
   email,
@@ -34,6 +40,7 @@ export function MercadoPagoPaymentBrick({
   const [generatingPix, setGeneratingPix] = useState(false);
   const [pixPayment, setPixPayment] = useState<PaymentResponse | null>(null);
   const [copiedPix, setCopiedPix] = useState(false);
+  const [pixStatus, setPixStatus] = useState("");
 
   useEffect(() => {
     if (publicKey) {
@@ -71,6 +78,27 @@ export function MercadoPagoPaymentBrick({
       initMercadoPago(publicKey, { locale: "pt-BR" });
     }
   }, [publicKey]);
+
+  const checkPixStatus = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/checkout/status?checkoutId=${encodeURIComponent(checkoutId)}`, {
+        cache: "no-store"
+      });
+      const payload = (await response.json()) as CheckoutStatusResponse;
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Nao consegui consultar o pagamento.");
+      }
+
+      setPixStatus(payload.status);
+
+      if (payload.status === "approved" || payload.status === "activated") {
+        window.location.href = "/ativar-acesso";
+      }
+    } catch {
+      setPixStatus("checking_failed");
+    }
+  }, [checkoutId]);
 
   const initialization = useMemo(
     () => ({
@@ -139,12 +167,22 @@ export function MercadoPagoPaymentBrick({
       }
 
       setPixPayment(payload);
+      setPixStatus(payload.status);
     } catch (pixError) {
       setError(pixError instanceof Error ? pixError.message : "Nao consegui gerar o Pix.");
     } finally {
       setGeneratingPix(false);
     }
   }, [checkoutId]);
+
+  useEffect(() => {
+    if (!pixPayment?.pix?.qrCode || pixPayment.status === "approved") return;
+
+    checkPixStatus();
+    const interval = window.setInterval(checkPixStatus, 4000);
+
+    return () => window.clearInterval(interval);
+  }, [checkPixStatus, pixPayment]);
 
   if (loadingPublicKey) {
     return (
@@ -209,6 +247,20 @@ export function MercadoPagoPaymentBrick({
               {copiedPix ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               {copiedPix ? "Codigo copiado" : "Copiar codigo Pix"}
             </button>
+
+            <p className="rounded-xl bg-sage/10 px-3 py-2 text-sm text-ink/70">
+              {pixStatus === "checking_failed"
+                ? "Pagamento gerado. Se voce ja pagou, aguarde alguns instantes ou atualize a pagina para consultar novamente."
+                : "Aguardando confirmacao do pagamento Pix..."}
+            </p>
+
+            <button
+              className="text-sm font-semibold text-sage hover:underline"
+              onClick={checkPixStatus}
+              type="button"
+            >
+              Ja paguei, verificar agora
+            </button>
           </div>
         )}
       </div>
@@ -241,6 +293,7 @@ export function MercadoPagoPaymentBrick({
 
                 if (payload.pix?.qrCode) {
                   setPixPayment(payload);
+                  setPixStatus(payload.status);
                   resolve(payload);
                   return;
                 }
