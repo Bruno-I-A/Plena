@@ -2,7 +2,13 @@ import { AppShell } from "@/components/AppShell";
 import { AuthForm } from "@/components/AuthForm";
 import { Badge, Card } from "@/components/ui";
 
-export default function ActivateAccessPage() {
+export default async function ActivateAccessPage({
+  searchParams
+}: {
+  searchParams: Promise<{ email?: string }>;
+}) {
+  const { email = "" } = await searchParams;
+
   return (
     <AppShell>
       <main className="mx-auto grid min-h-[calc(100dvh-9.35rem)] max-w-5xl gap-8 px-4 py-10 md:min-h-[calc(100dvh-4.25rem)] md:grid-cols-[0.9fr_1.1fr] md:items-center">
@@ -14,7 +20,7 @@ export default function ActivateAccessPage() {
           </p>
         </section>
         <Card className="bg-white/76">
-          <AuthForm initialMode="signup" redirectTo="/chat" />
+          <AuthForm initialEmail={email} initialMode="signup" redirectTo="/chat" />
         </Card>
       </main>
     </AppShell>

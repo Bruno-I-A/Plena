@@ -16,15 +16,17 @@ type Feedback = {
 
 export function AuthForm({
   initialMode = "login",
+  initialEmail = "",
   redirectTo = "/chat"
 }: {
   initialMode?: AuthMode;
+  initialEmail?: string;
   redirectTo?: string;
 }) {
   const router = useRouter();
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -44,16 +46,16 @@ export function AuthForm({
 
     supabase.auth.getUser().then(({ data }) => {
       setIsAuthenticated(Boolean(data.user));
-      setEmail(data.user?.email ?? "");
+      setEmail(data.user?.email ?? initialEmail);
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(Boolean(session?.user));
-      setEmail(session?.user.email ?? "");
+      setEmail(session?.user.email ?? initialEmail);
     });
 
     return () => listener.subscription.unsubscribe();
-  }, []);
+  }, [initialEmail]);
 
   function switchMode(nextMode: AuthMode) {
     setMode(nextMode);
@@ -92,6 +94,13 @@ export function AuthForm({
             name: name.trim(),
             email: email.trim()
           });
+        }
+
+        if (data.session) {
+          setFeedback({ tone: "success", text: "Acesso criado. Redirecionando para a Plena..." });
+          router.push(redirectTo);
+          router.refresh();
+          return;
         }
 
         setFeedback({

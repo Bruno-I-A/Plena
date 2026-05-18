@@ -41,6 +41,10 @@ export function MercadoPagoPaymentBrick({
   const [pixPayment, setPixPayment] = useState<PaymentResponse | null>(null);
   const [copiedPix, setCopiedPix] = useState(false);
   const [pixStatus, setPixStatus] = useState("");
+  const activationUrl = useMemo(
+    () => `/ativar-acesso?email=${encodeURIComponent(email.trim().toLowerCase())}`,
+    [email]
+  );
 
   useEffect(() => {
     if (publicKey) {
@@ -93,12 +97,12 @@ export function MercadoPagoPaymentBrick({
       setPixStatus(payload.status);
 
       if (payload.status === "approved" || payload.status === "activated") {
-        window.location.href = "/ativar-acesso";
+        window.location.href = activationUrl;
       }
     } catch {
       setPixStatus("checking_failed");
     }
-  }, [checkoutId]);
+  }, [activationUrl, checkoutId]);
 
   const initialization = useMemo(
     () => ({
@@ -158,7 +162,7 @@ export function MercadoPagoPaymentBrick({
       }
 
       if (payload.status === "approved") {
-        window.location.href = "/ativar-acesso";
+        window.location.href = activationUrl;
         return;
       }
 
@@ -173,7 +177,7 @@ export function MercadoPagoPaymentBrick({
     } finally {
       setGeneratingPix(false);
     }
-  }, [checkoutId]);
+  }, [activationUrl, checkoutId]);
 
   useEffect(() => {
     if (!pixPayment?.pix?.qrCode || pixPayment.status === "approved") return;
@@ -299,7 +303,7 @@ export function MercadoPagoPaymentBrick({
                 }
 
                 if (payload.status === "approved") {
-                  window.location.href = "/ativar-acesso";
+                  window.location.href = activationUrl;
                   resolve(payload);
                   return;
                 }
