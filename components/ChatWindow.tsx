@@ -232,7 +232,7 @@ export function ChatWindow() {
         {error && (
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-rose/12 px-4 py-3 text-sm text-ink/76 shadow-sm">
             <span>{error}</span>
-            {error.includes("Escolha um plano") && <LinkButton href="/premium" variant="ghost">Ver planos</LinkButton>}
+            {error.includes("Escolha um plano") && <LinkButton href="/contratar" variant="ghost">Ver planos</LinkButton>}
             {!userId && error.includes("Entre") && <LinkButton href="/login" variant="ghost">Entrar</LinkButton>}
           </div>
         )}

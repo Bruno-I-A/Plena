@@ -4,7 +4,7 @@ import { PLENA_MONTHLY_MESSAGE_LIMIT } from "@/lib/plans";
 import { createConversationTitle, createPersonalizedSystemPrompt } from "@/lib/chat";
 import { createSupabaseFromRequest, getAuthenticatedUser } from "@/lib/server-auth";
 import { createSupabaseAdmin } from "@/lib/supabase-admin";
-import { getSubscriptionStatus } from "@/lib/subscription";
+import { activateApprovedPurchaseForUser, getSubscriptionStatus } from "@/lib/subscription";
 import { getMonthlyPlenaUsage } from "@/lib/usage";
 import type { ProfilePreferences } from "@/lib/types";
 
@@ -42,7 +42,18 @@ export async function POST(request: NextRequest) {
       return jsonError("O Supabase ainda não foi configurado no servidor.", 500);
     }
 
-    const subscription = await getSubscriptionStatus(database, user.id);
+    let subscription = await getSubscriptionStatus(database, user.id);
+    if (!subscription.active && admin) {
+      const activated = await activateApprovedPurchaseForUser(admin, {
+        id: user.id,
+        email: user.email
+      });
+
+      if (activated) {
+        subscription = await getSubscriptionStatus(admin, user.id);
+      }
+    }
+
     if (!subscription.active) {
       return NextResponse.json(
         {

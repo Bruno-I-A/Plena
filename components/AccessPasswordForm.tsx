@@ -78,12 +78,26 @@ export function AccessPasswordForm({
     setFeedback(null);
 
     try {
+      const activatePurchase = async () => {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (!token) return;
+
+        await fetch("/api/checkout/activate", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+      };
+
       const { data: userData } = await supabase.auth.getUser();
 
       if (userData.user) {
         const { error } = await supabase.auth.updateUser({ password });
         if (error) throw error;
 
+        await activatePurchase();
         setFeedback({ tone: "success", text: "Senha criada. Redirecionando para a Plena..." });
         router.push(redirectTo);
         router.refresh();
@@ -98,6 +112,7 @@ export function AccessPasswordForm({
       if (error) throw error;
 
       if (data.session) {
+        await activatePurchase();
         setFeedback({ tone: "success", text: "Senha criada. Redirecionando para a Plena..." });
         router.push(redirectTo);
         router.refresh();
