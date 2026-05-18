@@ -82,7 +82,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       id: payment.id,
       status: payment.status,
-      statusDetail: payment.status_detail
+      statusDetail: payment.status_detail,
+      pix: payment.point_of_interaction?.transaction_data
+        ? {
+            qrCode: payment.point_of_interaction.transaction_data.qr_code,
+            qrCodeBase64: payment.point_of_interaction.transaction_data.qr_code_base64,
+            ticketUrl: payment.point_of_interaction.transaction_data.ticket_url
+          }
+        : null
     });
   } catch (error) {
     console.error(error);

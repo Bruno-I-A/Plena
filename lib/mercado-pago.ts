@@ -6,6 +6,13 @@ export type MercadoPagoPayment = {
   status: string;
   status_detail?: string;
   external_reference?: string;
+  point_of_interaction?: {
+    transaction_data?: {
+      qr_code?: string;
+      qr_code_base64?: string;
+      ticket_url?: string;
+    };
+  };
   metadata?: {
     user_id?: string;
     plan_id?: PlenaPaidPlanId;
