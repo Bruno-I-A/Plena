@@ -68,11 +68,11 @@ export function SubscribeForm({ initialPlan = "monthly" }: { initialPlan?: Plena
         <PlanButton active={planId === "annual"} onClick={() => setPlanId("annual")} price={PLENA_PLANS.annual.price} title="Anual" />
       </div>
 
-      <label className="block text-sm font-semibold text-ink/72">
+      <label className="block text-sm font-bold text-[#2a261f]/80">
         Nome
         <input
           autoComplete="name"
-          className="mt-2 w-full rounded-2xl border border-sage/18 bg-white px-4 py-3 text-ink outline-none transition placeholder:text-ink/35 focus:border-sage focus:ring-4 focus:ring-sage/10"
+          className="mt-2 w-full rounded-2xl border border-[#dbcfb4] bg-white px-4 py-3 text-[#2a261f] outline-none transition placeholder:text-[#7a6f5e]/45 focus:border-[#5e6b3f] focus:ring-4 focus:ring-[#5e6b3f]/10"
           onChange={(event) => setName(event.target.value)}
           placeholder="Seu nome"
           required
@@ -80,11 +80,11 @@ export function SubscribeForm({ initialPlan = "monthly" }: { initialPlan?: Plena
         />
       </label>
 
-      <label className="block text-sm font-semibold text-ink/72">
+      <label className="block text-sm font-bold text-[#2a261f]/80">
         Email de acesso
         <input
           autoComplete="email"
-          className="mt-2 w-full rounded-2xl border border-sage/18 bg-white px-4 py-3 text-ink outline-none transition placeholder:text-ink/35 focus:border-sage focus:ring-4 focus:ring-sage/10"
+          className="mt-2 w-full rounded-2xl border border-[#dbcfb4] bg-white px-4 py-3 text-[#2a261f] outline-none transition placeholder:text-[#7a6f5e]/45 focus:border-[#5e6b3f] focus:ring-4 focus:ring-[#5e6b3f]/10"
           onChange={(event) => setEmail(event.target.value)}
           placeholder="voce@email.com"
           required
@@ -93,11 +93,11 @@ export function SubscribeForm({ initialPlan = "monthly" }: { initialPlan?: Plena
         />
       </label>
 
-      <div className="rounded-2xl bg-sage/10 px-4 py-3 text-sm leading-relaxed text-ink/70">
-        Você vai pagar o plano {selectedPlan.name.toLowerCase()} aqui na Plena, com segurança do Mercado Pago. Depois do pagamento, crie sua senha usando este mesmo email.
+      <div className="rounded-2xl bg-[#ece1c8] px-4 py-3 text-sm leading-relaxed text-[#7a6f5e]">
+        Você vai pagar o plano {selectedPlan.name.toLowerCase()} por Pix. Depois do pagamento, crie sua senha usando este mesmo email.
       </div>
 
-      <Button className="w-full" disabled={loading} type="submit">
+      <Button className="w-full bg-[#3f4a2a] hover:bg-[#344020]" disabled={loading} type="submit">
         {loading && <Loader2 className="animate-spin" size={17} aria-hidden />}
         Continuar para pagamento
       </Button>
@@ -111,13 +111,15 @@ function PlanButton({ active, onClick, price, title }: { active: boolean; onClic
   return (
     <button
       className={`rounded-2xl border px-4 py-4 text-left transition ${
-        active ? "border-sage bg-sage/10 ring-4 ring-sage/10" : "border-sage/15 bg-white/70 hover:border-sage/35"
+        active
+          ? "border-[#3f4a2a] bg-[#ece1c8] ring-4 ring-[#5e6b3f]/15"
+          : "border-[#dbcfb4] bg-white/80 hover:border-[#5e6b3f]/45"
       }`}
       onClick={onClick}
       type="button"
     >
-      <span className="block font-serif text-2xl text-ink">{title}</span>
-      <span className="mt-1 block text-sm font-semibold text-sage">{price}</span>
+      <span className="block font-serif text-3xl text-[#2a261f]">{title}</span>
+      <span className="mt-2 block text-sm font-bold text-[#5e6b3f]">{price}</span>
     </button>
   );
 }
