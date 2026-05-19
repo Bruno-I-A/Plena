@@ -216,18 +216,13 @@ export default function HirePage() {
             <div className="mt-5 space-y-2 rounded-[1.2rem] border border-[#d6b67a]/35 bg-[#2f381f] p-4 text-sm">
               <p><strong className="text-[#d6b67a]">R$ 80</strong> — um delivery de quarta-feira</p>
               <p><strong className="text-[#d6b67a]">R$ 250</strong> — uma consulta avulsa</p>
-              <p><strong className="text-[#d6b67a]">{PLENA_PLANS.monthly.price}</strong> — teste de acesso à Plena</p>
+              <p><strong className="text-[#d6b67a]">R$ 29,33/mês</strong> — 1 mês com Plena no plano anual</p>
             </div>
 
             <div className="mt-6 space-y-4">
               <div className="rounded-[1.5rem] bg-[#fbf6e9] p-5 text-[#2a261f] shadow-[0_18px_40px_rgba(0,0,0,0.20)]">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-serif text-3xl">Plena Mensal</p>
-                    <p className="mt-2 text-3xl font-bold text-[#5e6b3f]">{PLENA_PLANS.monthly.price}</p>
-                  </div>
-                  <span className="rounded-full bg-[#ecc6bc] px-3 py-1 text-xs font-bold text-[#8e4a40]">teste</span>
-                </div>
+                <p className="font-serif text-3xl">Plena Mensal</p>
+                <p className="mt-2 text-3xl font-bold text-[#5e6b3f]">{PLENA_PLANS.monthly.price}</p>
                 <ul className="mt-5 space-y-3 text-sm text-[#7a6f5e]">
                   {features.map((feature) => (
                     <li className="flex gap-2" key={feature}>

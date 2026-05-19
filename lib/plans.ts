@@ -7,8 +7,8 @@ export const PLENA_PLANS = {
     id: "monthly",
     profilePlan: "plena_monthly",
     name: "Plena Mensal",
-    price: "R$ 0,20/mês",
-    amount: 0.2,
+    price: "R$ 34,99/mês",
+    amount: 34.99,
     description: "Para usar a Plena com flexibilidade mês a mês."
   },
   annual: {
