@@ -235,9 +235,16 @@ export default function HirePage() {
               </div>
 
               <div className="rounded-[1.5rem] border border-[#d6b67a]/35 bg-[#2f381f] p-5">
-                <p className="font-serif text-3xl">Plena Anual</p>
-                <p className="mt-2 text-3xl font-bold text-[#d6b67a]">{PLENA_PLANS.annual.price}</p>
-                <p className="mt-3 text-sm leading-relaxed text-[#fbf6e9]/70">{PLENA_PLANS.annual.description}</p>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-serif text-3xl">Plena Anual</p>
+                    <p className="mt-2 text-4xl font-bold text-[#d6b67a]">R$ 29,33/mês</p>
+                  </div>
+                  <span className="rounded-full bg-[#d6b67a] px-3 py-1 text-xs font-bold text-[#2a261f]">mais escolhido</span>
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-[#fbf6e9]/70">
+                  {PLENA_PLANS.annual.price} cobrados anualmente. Economize pagando o ano inteiro de uma vez.
+                </p>
                 <CheckoutButton className="mt-6" planId="annual" variant="secondary">Contratar anual</CheckoutButton>
               </div>
             </div>
