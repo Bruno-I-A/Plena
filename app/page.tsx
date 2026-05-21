@@ -137,17 +137,26 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <Card className="bg-white/82">
-              <p className="font-serif text-2xl text-ink">{PLENA_PLANS.monthly.name}</p>
-              <p className="mt-3 text-3xl font-bold text-sage">{PLENA_PLANS.monthly.price}</p>
-              <p className="mt-3 text-sm leading-relaxed text-ink/66">{PLENA_PLANS.monthly.description}</p>
-              <CheckoutButton className="mt-6" planId="monthly">Começar mensal</CheckoutButton>
-            </Card>
-            <Card>
-              <p className="font-serif text-2xl text-ink">{PLENA_PLANS.annual.name}</p>
-              <p className="mt-3 text-3xl font-bold text-sage">{PLENA_PLANS.annual.price}</p>
+            <Card className="relative overflow-hidden border-sand/70 bg-white/90 shadow-[0_20px_54px_rgba(63,74,42,0.18)]">
+              <span className="absolute right-0 top-0 rounded-bl-2xl bg-sand px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] text-ink">
+                mais escolhido
+              </span>
+              <p className="pr-28 text-xs font-bold uppercase tracking-[0.14em] text-sage">melhor valor</p>
+              <p className="mt-3 font-serif text-3xl text-ink">{PLENA_PLANS.annual.name}</p>
+              <p className="mt-3 text-4xl font-bold text-sage">{PLENA_PLANS.annual.price}</p>
               <p className="mt-3 text-sm leading-relaxed text-ink/66">{PLENA_PLANS.annual.description}</p>
-              <CheckoutButton className="mt-6" planId="annual" variant="secondary">Começar anual</CheckoutButton>
+              <CheckoutButton className="mt-6" planId="annual">Começar anual</CheckoutButton>
+            </Card>
+            <Card className="bg-white/58">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-serif text-2xl text-ink">{PLENA_PLANS.monthly.name}</p>
+                  <p className="mt-3 text-3xl font-bold text-sage">{PLENA_PLANS.monthly.price}</p>
+                </div>
+                <span className="rounded-full bg-sage/10 px-3 py-1 text-xs font-semibold text-sage">flexível</span>
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-ink/66">{PLENA_PLANS.monthly.description}</p>
+              <CheckoutButton className="mt-6" planId="monthly" variant="secondary">Começar mensal</CheckoutButton>
             </Card>
           </div>
         </section>

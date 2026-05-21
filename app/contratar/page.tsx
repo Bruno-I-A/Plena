@@ -220,10 +220,17 @@ export default function HirePage() {
             </div>
 
             <div className="mt-6 space-y-4">
-              <div className="rounded-[1.5rem] bg-[#fbf6e9] p-5 text-[#2a261f] shadow-[0_18px_40px_rgba(0,0,0,0.20)]">
-                <p className="font-serif text-3xl">Plena Mensal</p>
-                <p className="mt-2 text-3xl font-bold text-[#5e6b3f]">{PLENA_PLANS.monthly.price}</p>
-                <ul className="mt-5 space-y-3 text-sm text-[#7a6f5e]">
+              <div className="relative overflow-hidden rounded-[1.5rem] border-2 border-[#d6b67a] bg-[#fbf6e9] p-5 text-[#2a261f] shadow-[0_22px_50px_rgba(0,0,0,0.28)]">
+                <div className="absolute right-0 top-0 rounded-bl-[1.1rem] bg-[#d6b67a] px-4 py-2 text-xs font-bold uppercase tracking-[0.08em] text-[#2a261f]">
+                  mais escolhido
+                </div>
+                <p className="pr-28 text-xs font-bold uppercase tracking-[0.16em] text-[#8e6f34]">melhor valor</p>
+                <p className="mt-3 font-serif text-4xl leading-none">Plena Anual</p>
+                <p className="mt-3 text-4xl font-bold text-[#5e6b3f]">R$ 29,33/mês</p>
+                <p className="mt-3 rounded-[1rem] bg-[#efe2c5] px-4 py-3 text-sm font-semibold leading-relaxed text-[#5d4a27]">
+                  {PLENA_PLANS.annual.price} cobrados anualmente. Economize R$ 67,88 em relação ao mensal.
+                </p>
+                <ul className="mt-5 space-y-3 text-sm text-[#5f6650]">
                   {features.map((feature) => (
                     <li className="flex gap-2" key={feature}>
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#5e6b3f]" />
@@ -231,21 +238,21 @@ export default function HirePage() {
                     </li>
                   ))}
                 </ul>
-                <CheckoutButton className="mt-6" planId="monthly">Contratar mensal</CheckoutButton>
+                <CheckoutButton className="mt-6" planId="annual">Contratar anual</CheckoutButton>
               </div>
 
               <div className="rounded-[1.5rem] border border-[#d6b67a]/35 bg-[#2f381f] p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="font-serif text-3xl">Plena Anual</p>
-                    <p className="mt-2 text-4xl font-bold text-[#d6b67a]">R$ 29,33/mês</p>
+                    <p className="font-serif text-3xl">Plena Mensal</p>
+                    <p className="mt-2 text-3xl font-bold text-[#d6b67a]">{PLENA_PLANS.monthly.price}</p>
                   </div>
-                  <span className="rounded-full bg-[#d6b67a] px-3 py-1 text-xs font-bold text-[#2a261f]">mais escolhido</span>
+                  <span className="rounded-full bg-[#d6b67a]/18 px-3 py-1 text-xs font-bold text-[#d6b67a]">flexível</span>
                 </div>
                 <p className="mt-3 text-sm leading-relaxed text-[#fbf6e9]/70">
-                  {PLENA_PLANS.annual.price} cobrados anualmente. Economize pagando o ano inteiro de uma vez.
+                  Para usar mês a mês, com o mesmo acesso e sem cobrança anual.
                 </p>
-                <CheckoutButton className="mt-6" planId="annual" variant="secondary">Contratar anual</CheckoutButton>
+                <CheckoutButton className="mt-6" planId="monthly" variant="secondary">Contratar mensal</CheckoutButton>
               </div>
             </div>
 
