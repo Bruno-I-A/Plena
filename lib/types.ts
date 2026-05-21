@@ -39,3 +39,43 @@ export type ProfilePreferences = {
   cooking_time: CookingTime;
   preference_notes: string | null;
 };
+
+export type MealSlot = "breakfast" | "lunch" | "snack" | "dinner";
+
+export type WeeklyMenuMeals = Record<string, Partial<Record<MealSlot, string>>>;
+
+export type WeeklyMenu = {
+  id: string;
+  user_id: string;
+  title: string;
+  week_start: string | null;
+  meals: WeeklyMenuMeals;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ShoppingListItem = {
+  id: string;
+  name: string;
+  category: string;
+  checked: boolean;
+};
+
+export type ShoppingList = {
+  id: string;
+  user_id: string;
+  title: string;
+  items: ShoppingListItem[];
+  created_at: string;
+  updated_at: string;
+};
+
+export type PantryItem = {
+  id: string;
+  user_id: string;
+  name: string;
+  category: string | null;
+  quantity: string | null;
+  created_at: string;
+};

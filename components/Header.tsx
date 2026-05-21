@@ -22,10 +22,13 @@ export function Header() {
           </span>
         </Link>
         <nav className="hidden items-center gap-2 text-sm font-medium text-ink/70 md:flex">
+          <Link className="rounded-full px-3 py-2 hover:bg-white/70" href="/rotina">Rotina</Link>
           <Link className="rounded-full px-3 py-2 hover:bg-white/70" href="/chat">Chat</Link>
+          <Link className="rounded-full px-3 py-2 hover:bg-white/70" href="/cardapio">Cardapio</Link>
+          <Link className="rounded-full px-3 py-2 hover:bg-white/70" href="/compras">Compras</Link>
+          <Link className="rounded-full px-3 py-2 hover:bg-white/70" href="/despensa">Tenho em casa</Link>
           <Link className="rounded-full px-3 py-2 hover:bg-white/70" href="/conversas">Conversas</Link>
           <Link className="rounded-full px-3 py-2 hover:bg-white/70" href="/favoritas">Favoritas</Link>
-          <Link className="rounded-full px-3 py-2 hover:bg-white/70" href="/contratar">Contratar</Link>
           <Link className="rounded-full px-3 py-2 hover:bg-white/70" href="/login">Perfil</Link>
         </nav>
       </div>

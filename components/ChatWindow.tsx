@@ -24,6 +24,7 @@ export function ChatWindow() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialConversationId = searchParams.get("id");
+  const initialPrompt = searchParams.get("prompt") ?? "";
   const [conversationId, setConversationId] = useState<string | null>(initialConversationId);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -85,6 +86,11 @@ export function ChatWindow() {
         setMessages((data ?? []) as Message[]);
       });
   }, [initialConversationId]);
+
+  useEffect(() => {
+    if (!initialPrompt || input) return;
+    setInput(initialPrompt.slice(0, 1200));
+  }, [initialPrompt, input]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });

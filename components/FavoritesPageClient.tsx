@@ -54,7 +54,7 @@ export function FavoritesPageClient() {
   return (
     <div className="space-y-4">
       {status && <p className="rounded-2xl bg-white/60 p-4 text-sm text-ink/68">{status}</p>}
-      {!authenticated && <LinkButton href="/login">Entrar ou cadastrar</LinkButton>}
+      {!authenticated && <LinkButton href="/login">Entrar</LinkButton>}
       <div className="grid gap-4 md:grid-cols-2">
         {favorites.map((favorite) => (
           <FavoriteCard
