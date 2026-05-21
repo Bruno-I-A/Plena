@@ -8,32 +8,25 @@ import { Button } from "@/components/ui";
 import { PLENA_MONTHLY_MESSAGE_LIMIT } from "@/lib/plans";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase-browser";
 
-type AuthMode = "login" | "signup";
 type Feedback = {
   tone: "neutral" | "success" | "error";
   text: string;
 };
 
 export function AuthForm({
-  initialMode = "login",
   initialEmail = "",
   redirectTo = "/chat"
 }: {
-  initialMode?: AuthMode;
   initialEmail?: string;
   redirectTo?: string;
 }) {
   const router = useRouter();
-  const [mode, setMode] = useState<AuthMode>(initialMode);
-  const [name, setName] = useState("");
   const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
-
-  const isSignup = mode === "signup";
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -57,18 +50,13 @@ export function AuthForm({
     return () => listener.subscription.unsubscribe();
   }, [initialEmail]);
 
-  function switchMode(nextMode: AuthMode) {
-    setMode(nextMode);
-    setFeedback(null);
-  }
-
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!isSupabaseConfigured) {
       setFeedback({
         tone: "error",
-        text: "O Supabase ainda não está configurado nesta instalação."
+        text: "O Supabase ainda nao esta configurado nesta instalacao."
       });
       return;
     }
@@ -77,41 +65,6 @@ export function AuthForm({
     setFeedback(null);
 
     try {
-      if (isSignup) {
-        const { data, error } = await supabase.auth.signUp({
-          email: email.trim(),
-          password,
-          options: {
-            data: { name: name.trim() }
-          }
-        });
-
-        if (error) throw error;
-
-        if (data.user) {
-          await supabase.from("profiles").upsert({
-            id: data.user.id,
-            name: name.trim(),
-            email: email.trim()
-          });
-        }
-
-        if (data.session) {
-          setFeedback({ tone: "success", text: "Acesso criado. Redirecionando para a Plena..." });
-          router.push(redirectTo);
-          router.refresh();
-          return;
-        }
-
-        setFeedback({
-          tone: "success",
-          text: "Conta criada. Se a confirmação por email estiver ativa no Supabase, confirme sua conta antes de entrar."
-        });
-        setMode("login");
-        setPassword("");
-        return;
-      }
-
       const { error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password
@@ -125,7 +78,7 @@ export function AuthForm({
     } catch (authError) {
       setFeedback({
         tone: "error",
-        text: authError instanceof Error ? authError.message : "Não foi possível autenticar agora."
+        text: authError instanceof Error ? authError.message : "Nao foi possivel autenticar agora."
       });
     } finally {
       setLoading(false);
@@ -139,7 +92,7 @@ export function AuthForm({
     await supabase.auth.signOut();
     setIsAuthenticated(false);
     setPassword("");
-    setFeedback({ tone: "success", text: "Você saiu da sua conta." });
+    setFeedback({ tone: "success", text: "Voce saiu da sua conta." });
     setLoading(false);
     router.refresh();
   }
@@ -158,7 +111,7 @@ export function AuthForm({
             </div>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-ink/68">
-            Seu histórico, conversas e receitas favoritas ficam salvos nesta conta. Você tem até {PLENA_MONTHLY_MESSAGE_LIMIT} mensagens da Plena por mês.
+            Seu historico, conversas e receitas favoritas ficam salvos nesta conta. Voce tem ate {PLENA_MONTHLY_MESSAGE_LIMIT} mensagens da Plena por mes.
           </p>
         </div>
 
@@ -181,41 +134,6 @@ export function AuthForm({
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
-      <div className="grid grid-cols-2 rounded-full bg-sand/18 p-1">
-        <button
-          className={`rounded-full px-4 py-2.5 text-sm font-semibold transition ${
-            mode === "login" ? "bg-white text-sage shadow-sm" : "text-ink/60 hover:text-ink"
-          }`}
-          onClick={() => switchMode("login")}
-          type="button"
-        >
-          Entrar
-        </button>
-        <button
-          className={`rounded-full px-4 py-2.5 text-sm font-semibold transition ${
-            mode === "signup" ? "bg-white text-sage shadow-sm" : "text-ink/60 hover:text-ink"
-          }`}
-          onClick={() => switchMode("signup")}
-          type="button"
-        >
-          Criar conta
-        </button>
-      </div>
-
-      {isSignup && (
-        <label className="block text-sm font-semibold text-ink/72">
-          Nome
-          <input
-            autoComplete="name"
-            className="mt-2 w-full rounded-2xl border border-sage/18 bg-white px-4 py-3 text-ink outline-none transition placeholder:text-ink/35 focus:border-sage focus:ring-4 focus:ring-sage/10"
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Como quer ser chamada?"
-            required
-            value={name}
-          />
-        </label>
-      )}
-
       <label className="block text-sm font-semibold text-ink/72">
         Email
         <span className="relative mt-2 block">
@@ -236,11 +154,11 @@ export function AuthForm({
         Senha
         <span className="relative mt-2 block">
           <input
-            autoComplete={isSignup ? "new-password" : "current-password"}
+            autoComplete="current-password"
             className="w-full rounded-2xl border border-sage/18 bg-white px-4 py-3 pr-12 text-ink outline-none transition placeholder:text-ink/35 focus:border-sage focus:ring-4 focus:ring-sage/10"
             minLength={6}
             onChange={(event) => setPassword(event.target.value)}
-            placeholder="Mínimo de 6 caracteres"
+            placeholder="Minimo de 6 caracteres"
             required
             type={showPassword ? "text" : "password"}
             value={password}
@@ -258,7 +176,7 @@ export function AuthForm({
 
       <Button className="w-full" disabled={loading} type="submit">
         {loading && <Loader2 className="animate-spin" size={17} aria-hidden />}
-        {isSignup ? "Criar minha conta" : "Entrar na Plena"}
+        Entrar na Plena
       </Button>
 
       {feedback && <FeedbackMessage feedback={feedback} />}

@@ -2,13 +2,13 @@ import Image from "next/image";
 import { CheckCircle2, Heart, MessageCircle, ShieldCheck } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { AuthForm } from "@/components/AuthForm";
-import { Badge, Card } from "@/components/ui";
+import { Badge, Card, LinkButton } from "@/components/ui";
 
 const benefits = [
   {
     icon: MessageCircle,
     title: "Continue conversas",
-    text: "Retome ideias de cardápio, receitas e listas sem começar do zero."
+    text: "Retome ideias de cardapio, receitas e listas sem comecar do zero."
   },
   {
     icon: Heart,
@@ -18,7 +18,7 @@ const benefits = [
   {
     icon: ShieldCheck,
     title: "Dados protegidos",
-    text: "A autenticação usa Supabase e mantém cada conta separada."
+    text: "A autenticacao usa Supabase e mantem cada conta separada."
   }
 ];
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
               Entre para guardar sua cozinha do seu jeito
             </h1>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink/68">
-              Use sua conta para salvar histórico, favoritas e continuar conversas anteriores com a Plena.
+              Entre com o email e a senha criados depois da compra para salvar historico, favoritas e continuar conversas anteriores com a Plena.
             </p>
           </div>
 
@@ -55,9 +55,10 @@ export default function LoginPage() {
 
           <div className="flex items-start gap-3 rounded-3xl bg-cream/70 p-4 text-sm leading-relaxed text-ink/65">
             <CheckCircle2 className="mt-0.5 shrink-0 text-sage" size={18} aria-hidden />
-            <p>
-              Depois de entrar, escolha um plano para liberar suas mensagens mensais, favoritos e histórico.
-            </p>
+            <div>
+              <p>Ainda nao tem acesso? Contrate um plano e crie sua senha pelo link de ativacao depois do pagamento.</p>
+              <LinkButton className="mt-3" href="/contratar" variant="secondary">Ver planos</LinkButton>
+            </div>
           </div>
         </section>
 
@@ -66,7 +67,7 @@ export default function LoginPage() {
             <div className="border-b border-sand/18 bg-white/72 px-6 py-6">
               <div className="flex items-center gap-4">
                 <span className="relative h-14 w-14 overflow-hidden rounded-full bg-cream ring-1 ring-sage/15">
-                  <Image alt="Ícone Plena" fill sizes="56px" src="/brand/plena-icon.png" className="object-cover" />
+                  <Image alt="Icone Plena" fill sizes="56px" src="/brand/plena-icon.png" className="object-cover" />
                 </span>
                 <div>
                   <p className="font-serif text-3xl leading-none text-ink">Plena</p>

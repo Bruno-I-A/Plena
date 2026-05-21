@@ -57,7 +57,7 @@ export function AccessPasswordForm({
     event.preventDefault();
 
     if (!isSupabaseConfigured) {
-      setFeedback({ tone: "error", text: "O Supabase ainda não está configurado." });
+      setFeedback({ tone: "error", text: "O Supabase ainda nao esta configurado." });
       return;
     }
 
@@ -69,7 +69,7 @@ export function AccessPasswordForm({
     if (isConnectedToAnotherEmail) {
       setFeedback({
         tone: "error",
-        text: `Você está conectada com ${currentEmail}. Saia dessa conta para criar acesso com ${targetEmail}.`
+        text: `Voce esta conectada com ${currentEmail}. Saia dessa conta para criar acesso com ${targetEmail}.`
       });
       return;
     }
@@ -104,30 +104,36 @@ export function AccessPasswordForm({
         return;
       }
 
-      const { data, error } = await supabase.auth.signUp({
+      const response = await fetch("/api/access/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: targetEmail,
+          password
+        })
+      });
+
+      const payload = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Nao foi possivel criar sua senha agora.");
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email: targetEmail,
         password
       });
 
-      if (error) throw error;
+      if (signInError) throw signInError;
 
-      if (data.session) {
-        await activatePurchase();
-        setFeedback({ tone: "success", text: "Senha criada. Redirecionando para a Plena..." });
-        router.push(redirectTo);
-        router.refresh();
-        return;
-      }
-
-      setFeedback({
-        tone: "success",
-        text: "Senha criada. Se a confirmação por email estiver ativa, confirme o email e entre na Plena."
-      });
-      setPassword("");
+      setFeedback({ tone: "success", text: "Senha criada. Redirecionando para a Plena..." });
+      router.push(redirectTo);
+      router.refresh();
     } catch (error) {
       setFeedback({
         tone: "error",
-        text: error instanceof Error ? error.message : "Não foi possível criar sua senha agora."
+        text: error instanceof Error ? error.message : "Nao foi possivel criar sua senha agora."
       });
     } finally {
       setLoading(false);
@@ -176,7 +182,7 @@ export function AccessPasswordForm({
             className="w-full rounded-2xl border border-sage/18 bg-white px-4 py-3 pr-12 text-ink outline-none transition placeholder:text-ink/35 focus:border-sage focus:ring-4 focus:ring-sage/10"
             minLength={6}
             onChange={(event) => setPassword(event.target.value)}
-            placeholder="Mínimo de 6 caracteres"
+            placeholder="Minimo de 6 caracteres"
             required
             type={showPassword ? "text" : "password"}
             value={password}
