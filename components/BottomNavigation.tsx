@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CalendarDays, CheckSquare, Heart, Home, MessageCircle } from "lucide-react";
+import { CalendarDays, CheckSquare, Home, MessageCircle, PackageOpen } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 
@@ -10,7 +10,7 @@ const items = [
   { href: "/chat", label: "Chat", icon: MessageCircle },
   { href: "/cardapio", label: "Cardapio", icon: CalendarDays },
   { href: "/compras", label: "Compras", icon: CheckSquare },
-  { href: "/favoritas", label: "Favoritas", icon: Heart }
+  { href: "/despensa", label: "Despensa", icon: PackageOpen }
 ];
 
 export function BottomNavigation() {
@@ -25,7 +25,7 @@ export function BottomNavigation() {
           return (
             <Link
               className={clsx(
-                "flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[0.68rem] font-semibold transition",
+                "flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[0.66rem] font-semibold transition",
                 active ? "bg-sage text-white" : "text-ink/62 hover:bg-white/70"
               )}
               href={item.href}

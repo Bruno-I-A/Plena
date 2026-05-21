@@ -100,16 +100,22 @@ export function RoutineDashboardClient() {
 
   if (status) {
     return (
-      <div className="rounded-3xl border border-white/70 bg-white/64 p-5 text-sm text-ink/68 shadow-soft">
-        <p>{status}</p>
-        {status.includes("Entre") && <LinkButton className="mt-4" href="/login">Entrar</LinkButton>}
+      <div className="rounded-3xl border border-white/70 bg-white/72 p-5 text-sm text-ink/68 shadow-soft">
+        <p className="font-serif text-3xl text-ink">Entre para usar a Plena</p>
+        <p className="mt-2">{status}</p>
+        {status.includes("Entre") && (
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            <LinkButton href="/login">Entrar</LinkButton>
+            <LinkButton href="/contratar" variant="secondary">Ver planos</LinkButton>
+          </div>
+        )}
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
+      <section className="grid gap-3 md:grid-cols-[1.1fr_0.9fr] md:gap-4">
         <div className="rounded-[1.35rem] border border-white/70 bg-white/70 p-5 shadow-soft">
           <div className="flex items-center gap-3">
             <span className="grid h-11 w-11 place-items-center rounded-full bg-sage/12 text-sage">
@@ -120,23 +126,27 @@ export function RoutineDashboardClient() {
               <p className="truncate text-sm text-ink/62">{email}</p>
             </div>
           </div>
-          <p className="mt-5 font-serif text-3xl text-ink">O que vamos resolver hoje?</p>
-          <p className="mt-2 text-sm leading-relaxed text-ink/64">
+          <p className="mt-5 font-serif text-3xl leading-tight text-ink md:text-4xl">O que vamos resolver hoje?</p>
+          <p className="mt-2 text-sm leading-relaxed text-ink/64 md:max-w-xl">
             Use a Plena para transformar conversas em cardapio, compras e ideias com o que voce ja tem.
           </p>
         </div>
 
         <div className="rounded-[1.35rem] border border-sage/15 bg-sage p-5 text-white shadow-soft">
-          <p className="text-sm font-semibold text-white/78">Mensagens do mes</p>
-          <p className="mt-3 font-serif text-5xl">{usage ? usage.remaining : "--"}</p>
-          <p className="mt-2 text-sm text-white/75">
-            {usage ? `${usage.used} usadas de ${usage.limit}` : "Carregando limite da assinatura"}
-          </p>
-          <LinkButton className="mt-5 bg-white text-sage hover:bg-cream" href="/chat">Abrir chat</LinkButton>
+          <div className="flex items-center justify-between gap-4 md:block">
+            <div>
+              <p className="text-sm font-semibold text-white/78">Mensagens do mes</p>
+              <p className="mt-1 font-serif text-5xl md:mt-3">{usage ? usage.remaining : "--"}</p>
+              <p className="mt-1 text-sm text-white/75 md:mt-2">
+                {usage ? `${usage.used} usadas de ${usage.limit}` : "Carregando limite"}
+              </p>
+            </div>
+            <LinkButton className="shrink-0 bg-white text-sage hover:bg-cream md:mt-5" href="/chat">Abrir chat</LinkButton>
+          </div>
         </div>
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {actions.map((action) => {
           const Icon = action.icon;
           return (
@@ -148,14 +158,14 @@ export function RoutineDashboardClient() {
               <span className="grid h-10 w-10 place-items-center rounded-full bg-sand/20 text-sage">
                 <Icon size={19} aria-hidden />
               </span>
-              <p className="mt-4 font-semibold text-ink">{action.title}</p>
-              <p className="mt-2 text-sm leading-relaxed text-ink/60">{action.text}</p>
+              <p className="mt-3 text-sm font-semibold leading-tight text-ink md:mt-4 md:text-base">{action.title}</p>
+              <p className="mt-2 hidden text-sm leading-relaxed text-ink/60 sm:block">{action.text}</p>
             </Link>
           );
         })}
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat icon={CalendarDays} label="Cardapios" value={counts.menus} />
         <Stat icon={CheckSquare} label="Listas" value={counts.lists} />
         <Stat icon={ChefHat} label="Ingredientes" value={counts.pantry} />
