@@ -29,6 +29,11 @@ export function ChatMessage({
             : "rounded-[1.45rem] rounded-bl-sm border border-white/75 bg-white text-ink"
         )}
       >
+        {isUser && message.imageUrl && (
+          <div className="relative mb-3 aspect-[4/3] w-full overflow-hidden rounded-[1rem] bg-white/10">
+            <Image alt="Foto enviada pela usuaria" className="object-cover" fill sizes="(max-width: 768px) 88vw, 520px" src={message.imageUrl} unoptimized />
+          </div>
+        )}
         <FormattedMessage content={message.content} isUser={isUser} />
         {!isUser && (
           <div className="mt-3 flex flex-wrap gap-2">

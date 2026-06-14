@@ -15,7 +15,13 @@ export type Message = {
   user_id?: string | null;
   role: ChatRole;
   content: string;
+  imageUrl?: string | null;
   created_at?: string;
+};
+
+export type ChatImageAttachment = {
+  dataUrl: string;
+  mediaType: "image/jpeg" | "image/png" | "image/webp" | "image/gif";
 };
 
 export type Favorite = {

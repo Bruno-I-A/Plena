@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import type { ContentBlockParam, MessageParam } from "@anthropic-ai/sdk/resources/messages/messages";
 import { NextRequest, NextResponse } from "next/server";
 import { PLENA_MONTHLY_MESSAGE_LIMIT } from "@/lib/plans";
 import { createConversationTitle, createPersonalizedSystemPrompt } from "@/lib/chat";
@@ -15,8 +16,40 @@ type IncomingMessage = {
   content: string;
 };
 
+type IncomingImage = {
+  dataUrl?: string;
+  mediaType?: "image/jpeg" | "image/png" | "image/webp" | "image/gif";
+};
+
+const MAX_IMAGE_BASE64_BYTES = 4 * 1024 * 1024;
+const SUPPORTED_IMAGE_MEDIA_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+
 function jsonError(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status });
+}
+
+function parseImageAttachment(image?: IncomingImage | null) {
+  if (!image?.dataUrl || !image.mediaType) return null;
+
+  if (!SUPPORTED_IMAGE_MEDIA_TYPES.has(image.mediaType)) {
+    throw new Error("Envie uma imagem JPG, PNG, WebP ou GIF.");
+  }
+
+  const match = image.dataUrl.match(/^data:(image\/(?:jpeg|png|webp|gif));base64,([A-Za-z0-9+/=]+)$/);
+  if (!match || match[1] !== image.mediaType) {
+    throw new Error("Nao consegui ler essa foto. Tente enviar outra imagem.");
+  }
+
+  const base64Data = match[2];
+  const estimatedBytes = Math.ceil((base64Data.length * 3) / 4);
+  if (estimatedBytes > MAX_IMAGE_BASE64_BYTES) {
+    throw new Error("A foto precisa ter ate 4 MB.");
+  }
+
+  return {
+    data: base64Data,
+    mediaType: image.mediaType
+  };
 }
 
 export async function POST(request: NextRequest) {
@@ -24,12 +57,20 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as {
       conversationId?: string;
       message?: string;
+      image?: IncomingImage | null;
       history?: IncomingMessage[];
     };
 
     const message = body.message?.trim();
-    if (!message) return jsonError("Escreva uma mensagem para a Plena responder.");
-    if (message.length > 1200) return jsonError("Sua mensagem ficou muito longa. Envie em partes menores.");
+    let image;
+    try {
+      image = parseImageAttachment(body.image);
+    } catch (imageError) {
+      return jsonError(imageError instanceof Error ? imageError.message : "Nao consegui ler essa foto.");
+    }
+
+    if (!message && !image) return jsonError("Escreva uma mensagem ou envie uma foto para a Plena responder.");
+    if ((message?.length ?? 0) > 1200) return jsonError("Sua mensagem ficou muito longa. Envie em partes menores.");
 
     const user = await getAuthenticatedUser(request);
     if (!user) {
@@ -109,14 +150,46 @@ export async function POST(request: NextRequest) {
       .filter((item) => (item.role === "user" || item.role === "assistant") && item.content?.trim())
       .slice(-8);
 
+    const userText = image
+      ? `${message || "Estime as calorias desta refeicao pela foto."}
+
+Analise a foto da comida e responda em portugues com:
+- alimentos que parecem estar no prato
+- estimativa visual da porcao
+- faixa aproximada de calorias
+- principais incertezas da estimativa
+- uma dica simples para equilibrar a refeicao, se fizer sentido
+
+Nao trate como calculo exato nem orientacao clinica.`
+      : message ?? "";
+
+    const userContent: string | ContentBlockParam[] = image
+      ? ([
+          {
+            type: "image" as const,
+            source: {
+              type: "base64" as const,
+              media_type: image.mediaType,
+              data: image.data
+            }
+          },
+          {
+            type: "text" as const,
+            text: userText
+          }
+        ] satisfies ContentBlockParam[])
+      : userText;
+
+    const anthropicMessages: MessageParam[] = [
+      ...history,
+      { role: "user", content: userContent }
+    ];
+
     const response = await anthropic.messages.create({
       model: "claude-haiku-4-5",
       max_tokens: 850,
       system: createPersonalizedSystemPrompt(profilePreferences as ProfilePreferences | null),
-      messages: [
-        ...history,
-        { role: "user", content: message }
-      ]
+      messages: anthropicMessages
     });
 
     const replyBlock = response.content.find((b) => b.type === "text");
@@ -131,7 +204,7 @@ export async function POST(request: NextRequest) {
         .from("conversations")
         .insert({
           user_id: user.id,
-          title: createConversationTitle(message)
+          title: createConversationTitle(message || "Foto para estimativa de calorias")
         })
         .select("id")
         .single();
@@ -149,7 +222,7 @@ export async function POST(request: NextRequest) {
         conversation_id: conversationId,
         user_id: user.id,
         role: "user",
-        content: message
+        content: message || "Foto enviada para estimativa de calorias."
       })
       .select("id")
       .single();

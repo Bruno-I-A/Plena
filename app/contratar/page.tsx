@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowRight, Check, Clock3, Heart, Leaf, MessageCircle, ShieldCheck, ShoppingBasket, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Camera, Check, Clock3, Flame, Heart, Leaf, MessageCircle, ShieldCheck, ShoppingBasket, Sparkles, Star, Utensils } from "lucide-react";
 import { CheckoutButton } from "@/components/CheckoutButton";
 import { PublicShell } from "@/components/PublicShell";
 import { SafetyNote } from "@/components/SafetyNote";
@@ -47,6 +47,7 @@ const cases = [
 
 const features = [
   `${PLENA_MONTHLY_MESSAGE_LIMIT} mensagens por mês com a Plena`,
+  "Estimativa de calorias pela foto da refeição",
   "Cardápios semanais montados para você",
   "Lista de compras organizada",
   "Histórico e receitas favoritas salvas",
@@ -146,6 +147,56 @@ export default function HirePage() {
                   Você diz os ingredientes, o tempo e o tipo de refeição. Ela responde direto, com uma ideia possível.
                 </p>
               </Card>
+            </div>
+          </section>
+
+          <section className="relative overflow-hidden bg-[#2f381f] px-6 py-11 text-[#fbf6e9]">
+            <div className="pointer-events-none absolute right-[-5rem] top-[-4rem] h-64 w-64 rounded-full bg-[#d6b67a]/24 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-[-5rem] left-[-4rem] h-56 w-56 rounded-full bg-[#b8665a]/22 blur-3xl" />
+
+            <div className="relative">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#d6b67a] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#2a261f]">
+                <Camera className="h-4 w-4" />
+                novo recurso
+              </span>
+              <h2 className="mt-5 font-serif text-[2.75rem] leading-[0.98]">
+                Tire uma foto do prato. A Plena estima as calorias.
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-[#fbf6e9]/78">
+                Quando você não sabe quanto tem ali, basta mandar a foto da comida. A Plena identifica os alimentos, estima a porção e devolve uma faixa aproximada de calorias, com cuidado e sem tratar como conta exata.
+              </p>
+
+              <div className="mt-6 rounded-[1.6rem] border border-[#d6b67a]/35 bg-[#fbf6e9] p-4 text-[#2a261f] shadow-[0_24px_60px_rgba(0,0,0,0.28)]">
+                <div className="overflow-hidden rounded-[1.15rem] bg-[#efe2c5]">
+                  <div className="grid aspect-[4/3] place-items-center bg-[linear-gradient(135deg,#d6b67a_0%,#f0dfbd_45%,#ecc6bc_100%)] p-5">
+                    <div className="grid h-44 w-44 place-items-center rounded-full bg-[#fbf6e9] shadow-[0_18px_45px_rgba(47,56,31,0.22)]">
+                      <div className="grid h-32 w-32 place-items-center rounded-full border-[10px] border-[#2f381f] bg-[#fbf6e9]">
+                        <Utensils className="h-12 w-12 text-[#b8665a]" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 space-y-3">
+                  <div className="ml-auto max-w-[88%] rounded-3xl rounded-br-md bg-[#5e6b3f] px-4 py-3 text-sm leading-relaxed text-[#fbf6e9]">
+                    Foto do almoço enviada. Consegue estimar as calorias?
+                  </div>
+                  <div className="rounded-3xl rounded-bl-md border border-[#dbcfb4] bg-white px-4 py-3 text-sm leading-relaxed text-[#2a261f]">
+                    Pela foto, parece arroz, frango grelhado, feijão e salada. Estimativa visual: cerca de 480 a 650 kcal. Pode variar pelo tamanho da porção e pelo óleo usado no preparo.
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-3">
+                <div className="flex gap-3 rounded-[1.2rem] border border-[#d6b67a]/35 bg-[#fbf6e9]/8 p-4 text-sm leading-relaxed text-[#fbf6e9]/82">
+                  <Flame className="mt-0.5 h-5 w-5 shrink-0 text-[#d6b67a]" />
+                  Ótimo para quem quer ter uma noção rápida do prato antes de comer, sem pesar tudo na balança.
+                </div>
+                <div className="flex gap-3 rounded-[1.2rem] border border-[#d6b67a]/35 bg-[#fbf6e9]/8 p-4 text-sm leading-relaxed text-[#fbf6e9]/82">
+                  <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#d6b67a]" />
+                  A resposta vem como estimativa, com aviso de incerteza e recomendação de profissional quando precisar de orientação individual.
+                </div>
+              </div>
             </div>
           </section>
 

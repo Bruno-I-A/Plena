@@ -11,7 +11,7 @@ import { Button, LinkButton } from "@/components/ui";
 import { PLENA_MONTHLY_MESSAGE_LIMIT } from "@/lib/plans";
 import { favoriteTitle, recentHistory } from "@/lib/chat";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase-browser";
-import type { Message } from "@/lib/types";
+import type { ChatImageAttachment, Message } from "@/lib/types";
 
 type Usage = {
   limit: number;
@@ -28,6 +28,7 @@ export function ChatWindow() {
   const [conversationId, setConversationId] = useState<string | null>(initialConversationId);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [selectedImage, setSelectedImage] = useState<ChatImageAttachment | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
@@ -100,13 +101,15 @@ export function ChatWindow() {
     setConversationId(null);
     setMessages([]);
     setInput("");
+    setSelectedImage(null);
     setError("");
     router.replace("/chat");
   }
 
   async function sendMessage(value = input) {
     const content = value.trim();
-    if (!content || loading) return;
+    const imageToSend = selectedImage;
+    if ((!content && !imageToSend) || loading) return;
 
     if (content.length > 1200) {
       setError("Sua mensagem ficou um pouco longa. Tente enviar em partes menores.");
@@ -122,12 +125,14 @@ export function ChatWindow() {
       id: crypto.randomUUID(),
       conversation_id: conversationId,
       role: "user",
-      content,
+      content: content || "Foto enviada para estimativa de calorias.",
+      imageUrl: imageToSend?.dataUrl ?? null,
       created_at: new Date().toISOString()
     };
 
     setMessages((current) => [...current, userMessage]);
     setInput("");
+    setSelectedImage(null);
     setError("");
     setLoading(true);
 
@@ -142,6 +147,7 @@ export function ChatWindow() {
         body: JSON.stringify({
           conversationId,
           message: content,
+          image: imageToSend,
           history
         })
       });
@@ -170,6 +176,7 @@ export function ChatWindow() {
     } catch (chatError) {
       setError(chatError instanceof Error ? chatError.message : "Algo saiu do ritmo. Tente novamente em instantes.");
       setMessages((current) => current.filter((message) => message.id !== userMessage.id));
+      setSelectedImage(imageToSend);
     } finally {
       setLoading(false);
     }
@@ -242,7 +249,14 @@ export function ChatWindow() {
             {!userId && error.includes("Entre") && <LinkButton href="/login" variant="ghost">Entrar</LinkButton>}
           </div>
         )}
-        <ChatInput disabled={loading} onChange={setInput} onSubmit={() => sendMessage()} value={input} />
+        <ChatInput
+          disabled={loading}
+          image={selectedImage}
+          onChange={setInput}
+          onImageChange={setSelectedImage}
+          onSubmit={() => sendMessage()}
+          value={input}
+        />
       </div>
     </section>
   );
